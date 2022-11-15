@@ -113,6 +113,7 @@ PENPOT_STORAGE_ASSETS_FS_DIRECTORY=/opt/data/assets
 PENPOT_TELEMETRY_ENABLED=false
 PENPOT_SMTP_DEFAULT_FROM=no-reply@example.com
 PENPOT_SMTP_DEFAULT_REPLY_TO=no-reply@example.com
+PENPOT_SECRET_KEY=$(openssl rand -hex 48)
 EOF
 
 ################################################

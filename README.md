@@ -57,6 +57,7 @@ sudo docker compose -f /etc/selfhosted/penpot/docker-compose.yml up -d
   - /etc/selfhosted/penpot/config.env
     - POSTGRES_PASSWORD
     - PENPOT_DATABASE_PASSWORD
+    - PENPOT_SECRET_KEY
   - /etc/selfhosted/pihole/config.env
     - ADMIN_TOKEN
     - WEBPASSWORD

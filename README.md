@@ -271,3 +271,14 @@ sudo tar -I zstd -xf ${HOME}/backups/pihole-15-11-2022.tar.zstd -C /var/lib/dock
 sudo tar -I zstd -xf ${HOME}/backups/penpot-assets-15-11-2022.tar.zstd -C /var/lib/docker/volumes/penpot-assets
 sudo tar -I zstd -xf ${HOME}/backups/penpot-postgres-15-11-2022.tar.zstd -C /var/lib/docker/volumes/penpot-postgres
 ```
+
+## Pair bluetooth devices
+```
+bluetoothctl
+power on
+agent on
+scan on
+pair $DEVICE-ID
+connect $DEVICE-ID
+trust $DEVICE-ID
+```

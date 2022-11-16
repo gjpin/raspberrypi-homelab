@@ -196,15 +196,22 @@ sudo ./applications/penpot.sh
 ################################################
 
 # References:
-# https://www.raspberrypi.org/documentation/configuration/hdmi-config.md
-# https://www.raspberrypi.org/documentation/configuration/config-txt/memory.md
-# https://www.raspberrypi.org/documentation/configuration/config-txt/video.md
+# https://www.raspberrypi.com/documentation/computers/config_txt.html
 
 # Reserve 256MB of memory for GPU
 echo 'gpu_mem=256' | sudo tee -a /boot/config.txt
 
 # Enable 4K 60 FPS
 echo 'hdmi_enable_4kp60=1' | sudo tee -a /boot/config.txt
+
+# Configure overscan
+sudo sed -i "s|^#overscan_left=.*|overscan_left=16|g" /boot/config.txt
+sudo sed -i "s|^#overscan_right=.*|overscan_right=16|g" /boot/config.txt
+sudo sed -i "s|^#overscan_top=.*|overscan_top=16|g" /boot/config.txt
+sudo sed -i "s|^#overscan_bottom=.*|overscan_bottom=16|g" /boot/config.txt
+
+# Install dependencies
+sudo apt install -y xserver-xorg raspberrypi-ui-mods
 
 # Install Steam Link
 sudo apt install -y steamlink

@@ -24,6 +24,7 @@ services:
   penpot-frontend:
     image: penpotapp/frontend:latest
     container_name: penpot-frontend
+    restart: always
     volumes:
       - penpot-assets:/opt/data
     env_file:
@@ -38,6 +39,7 @@ services:
   penpot-backend:
     image: penpotapp/backend:latest
     container_name: penpot-backend
+    restart: always
     volumes:
       - penpot-assets:/opt/data
     depends_on:
@@ -51,6 +53,7 @@ services:
   penpot-exporter:
     image: penpotapp/exporter:latest
     container_name: penpot-exporter
+    restart: always
     env_file:
       - config.env
     environment:

@@ -58,7 +58,7 @@ EOF
 # Import Headscale's configuration file
 sudo tee /etc/selfhosted/headscale/config.yaml << EOF
 ---
-server_url: https://network.$BASE_DOMAIN
+server_url: https://network.${BASE_DOMAIN}
 listen_addr: 0.0.0.0:8080
 metrics_listen_addr: 127.0.0.1:9090
 grpc_listen_addr: 0.0.0.0:50443
@@ -99,7 +99,7 @@ dns_config:
     - 172.31.0.100
   domains: []
   magic_dns: true
-  base_domain: $BASE_DOMAIN
+  base_domain: ${BASE_DOMAIN}
 unix_socket: /var/run/headscale.sock
 unix_socket_permission: "0770"
 logtail:
@@ -124,7 +124,7 @@ regions:
     nodes:
       - name: headscale
         regionid: 999
-        hostname: network-derp.$BASE_DOMAIN
+        hostname: network-derp.${BASE_DOMAIN}
 EOF
 
 ################################################
@@ -134,7 +134,7 @@ EOF
 sudo tee -a /etc/selfhosted/caddy/Caddyfile << EOF
 
 # Headscale
-network.$BASE_DOMAIN {
+network.${BASE_DOMAIN} {
         import default-header
 
         reverse_proxy headscale:8080 {
@@ -151,7 +151,7 @@ network.$BASE_DOMAIN {
 
 # DERP / STUN
 # To be confirmed if required
-network-derp.$BASE_DOMAIN {
+network-derp.${BASE_DOMAIN} {
         import default-header
 
         reverse_proxy headscale:3478 {
@@ -173,10 +173,10 @@ EOF
 # # Connect Tailscale to headscale (Windows)
 
 # REG ADD "HKLM\Software\Tailscale IPN" /v UnattendedMode /t REG_SZ /d always
-# REG ADD "HKLM\Software\Tailscale IPN" /v LoginURL /t REG_SZ /d "https://network.$BASE_DOMAIN"
+# REG ADD "HKLM\Software\Tailscale IPN" /v LoginURL /t REG_SZ /d "https://network.${BASE_DOMAIN}"
 
 # # Connect Tailscale to headscale (Linux)
-# sudo tailscale up --login-server https://network.$BASE_DOMAIN --authkey $PRE_AUTH_KEY
+# sudo tailscale up --login-server https://network.${BASE_DOMAIN} --authkey $PRE_AUTH_KEY
 
 # # Override local DNS
 # # https://github.com/juanfont/headscale/issues/280

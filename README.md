@@ -13,65 +13,103 @@ export CLOUDFLARE_API_TOKEN=""
 # Setup
 ## From backups
 1. Set environment variables
-2. Create/Update cloudflare records for vault/cloud/pihole/obsidian/penpot pointing to wireguard IP
+2. Create/Update cloudflare records for the following subdomains, pointing to wireguard IP:
+  - webdav (caddy webdav)
+  - photos (immich)
+  - obsidian (obsidian)
+  - pihole (pihole)
+  - contacts (radicale)
+  - syncthing (syncthing)
+  - vault (vaultwarden)
+  - (other-applications) cloud
+  - (other-applications) penpot
 3. Manually go through setup.sh
 4. Replace credentials with existing ones:
-  - /etc/selfhosted/nextcloud/config.env
-    - NEXTCLOUD_ADMIN_PASSWORD
+  - /etc/selfhosted/caddy/Caddyfile
+    - CLOUDFLARE_API_TOKEN
+    - HASHED_PASSWORD (webdav)
+  - /etc/selfhosted/immich/config.env
     - POSTGRES_PASSWORD
-    - REDIS_HOST_PASSWORD
+    - DB_PASSWORD
+    - JWT_SECRET
   - /etc/selfhosted/obsidian/config.env
     - COUCHDB_PASSWORD
-  - /etc/selfhosted/penpot/config.env
-    - POSTGRES_PASSWORD
-    - PENPOT_DATABASE_PASSWORD
   - /etc/selfhosted/pihole/config.env
     - ADMIN_TOKEN
     - WEBPASSWORD
+  - /etc/selfhosted/radicale/users
+    - HASHED_PASSWORD
   - /etc/selfhosted/vaultwarden/config.env
     - ADMIN_TOKEN
+  - (other-applications) /etc/selfhosted/nextcloud/config.env
+    - NEXTCLOUD_ADMIN_PASSWORD
+    - POSTGRES_PASSWORD
+    - REDIS_HOST_PASSWORD
+  - (other-applications) /etc/selfhosted/penpot/config.env
+    - POSTGRES_PASSWORD
+    - PENPOT_DATABASE_PASSWORD
 5. Restore Docker volumes (see below "Restore all Docker volumes + WireGuard configs")
 6. Restore WireGuard backup (see below "Restore all Docker volumes + WireGuard configs")
 7. Enable Wireguard: `sudo systemctl enable --now wg-quick@wg0`
 8. Start containers:
 ```
 sudo docker compose -f /etc/selfhosted/caddy/docker-compose.yml up -d
-sudo docker compose -f /etc/selfhosted/pihole/docker-compose.yml up -d
-sudo docker compose -f /etc/selfhosted/vaultwarden/docker-compose.yml up -d
-sudo docker compose -f /etc/selfhosted/nextcloud/docker-compose.yml up -d
+sudo docker compose -f /etc/selfhosted/immich/docker-compose.yml up -d
 sudo docker compose -f /etc/selfhosted/obsidian/docker-compose.yml up -d
-sudo docker compose -f /etc/selfhosted/penpot/docker-compose.yml up -d
+sudo docker compose -f /etc/selfhosted/pihole/docker-compose.yml up -d
+sudo docker compose -f /etc/selfhosted/radicale/docker-compose.yml up -d
+sudo docker compose -f /etc/selfhosted/syncthing/docker-compose.yml up -d
+sudo docker compose -f /etc/selfhosted/vaultwarden/docker-compose.yml up -d
 ```
+9. Add devices manually on syncthing (eg. 10.0.0.2:22000)
 
 ## From scratch
 1. Set environment variables
-2. Create/Update cloudflare records for vault/cloud/pihole/obsidian/penpot pointing to wireguard IP
+2. Create/Update cloudflare records for the following subdomains, pointing to wireguard IP:
+  - webdav (caddy webdav)
+  - photos (immich)
+  - obsidian (obsidian)
+  - pihole (pihole)
+  - contacts (radicale)
+  - syncthing (syncthing)
+  - vault (vaultwarden)
+  - (other-applications) cloud
+  - (other-applications) penpot
 3. Manually go through setup.sh
 4. Get generated credentials:
-  - /etc/selfhosted/nextcloud/config.env
-    - NEXTCLOUD_ADMIN_PASSWORD
+  - /etc/selfhosted/caddy/Caddyfile
+    - CLOUDFLARE_API_TOKEN
+    - HASHED_PASSWORD (webdav)
+  - /etc/selfhosted/immich/config.env
     - POSTGRES_PASSWORD
-    - REDIS_HOST_PASSWORD
+    - DB_PASSWORD
+    - JWT_SECRET
   - /etc/selfhosted/obsidian/config.env
     - COUCHDB_PASSWORD
-  - /etc/selfhosted/penpot/config.env
-    - POSTGRES_PASSWORD
-    - PENPOT_DATABASE_PASSWORD
-    - PENPOT_SECRET_KEY
   - /etc/selfhosted/pihole/config.env
     - ADMIN_TOKEN
     - WEBPASSWORD
+  - /etc/selfhosted/radicale/users
+    - HASHED_PASSWORD
   - /etc/selfhosted/vaultwarden/config.env
     - ADMIN_TOKEN
+  - (other-applications) /etc/selfhosted/nextcloud/config.env
+    - NEXTCLOUD_ADMIN_PASSWORD
+    - POSTGRES_PASSWORD
+    - REDIS_HOST_PASSWORD
+  - (other-applications) /etc/selfhosted/penpot/config.env
+    - POSTGRES_PASSWORD
+    - PENPOT_DATABASE_PASSWORD
 5. Configure and enable WireGuard
 6. Start containers:
 ```
 sudo docker compose -f /etc/selfhosted/caddy/docker-compose.yml up -d
-sudo docker compose -f /etc/selfhosted/pihole/docker-compose.yml up -d
-sudo docker compose -f /etc/selfhosted/vaultwarden/docker-compose.yml up -d
-sudo docker compose -f /etc/selfhosted/nextcloud/docker-compose.yml up -d
+sudo docker compose -f /etc/selfhosted/immich/docker-compose.yml up -d
 sudo docker compose -f /etc/selfhosted/obsidian/docker-compose.yml up -d
-sudo docker compose -f /etc/selfhosted/penpot/docker-compose.yml up -d
+sudo docker compose -f /etc/selfhosted/pihole/docker-compose.yml up -d
+sudo docker compose -f /etc/selfhosted/radicale/docker-compose.yml up -d
+sudo docker compose -f /etc/selfhosted/syncthing/docker-compose.yml up -d
+sudo docker compose -f /etc/selfhosted/vaultwarden/docker-compose.yml up -d
 ```
 7. Create penpot user: `sudo docker exec -ti penpot-backend ./manage.sh create-profile -u "Your Email" -p "Your Password" -n "Your Full Name"`
 8. Fix postgres 15 permissions on nextcloud:
@@ -83,17 +121,17 @@ EOSQL
 9. Add server local IP to router as DNS server
 10. Create folder 'backups' manually in Nextcloud for docker volumes backups (do not forget to keep this folder automatically synced with several clients)
 11. Access services:
-  - Vaultwarden: ```vault.$BASE_DOMAIN```
-  - Nextcloud: ```cloud.$BASE_DOMAIN```
-  - Pi-hole: ```pihole.$BASE_DOMAIN```
-  - Obsidian: ```obsidian.$BASE_DOMAIN```
-  - Penpot: ```penpot.$BASE_DOMAIN```
+  - Vaultwarden: ```vault.${BASE_DOMAIN}```
+  - Nextcloud: ```cloud.${BASE_DOMAIN}```
+  - Pi-hole: ```pihole.${BASE_DOMAIN}```
+  - Obsidian: ```obsidian.${BASE_DOMAIN}```
+  - Penpot: ```penpot.${BASE_DOMAIN}```
 12. Install Nextcloud apps: 
   - Bookmarks (required by floccus)
   - Contacts
   - Nextcloud Office
   - Deck
-13. Disable apps in Nextcloud (cloud.$BASE_DOMAIN/settings/apps):
+13. Disable apps in Nextcloud (cloud.${BASE_DOMAIN}/settings/apps):
   - Accessibility
   - Activity
   - Circles
@@ -110,7 +148,7 @@ EOSQL
   - User status
   - Weather status
 14. Add lists to Pi-hole (https://firebog.net):
-  - Regex (add to https://pihole.$BASE_DOMAIN/admin/groups-domains.php):
+  - Regex (add to https://pihole.${BASE_DOMAIN}/admin/groups-domains.php):
     - https://github.com/mmotti/pihole-regex/blob/master/regex.list
   - Privacy:
     - https://raw.githubusercontent.com/crazy-max/WindowsSpyBlocker/master/data/hosts/spy.txt
@@ -143,6 +181,7 @@ EOSQL
     - https://raw.githubusercontent.com/r-a-y/mobile-hosts/master/AdguardDNS.txt
   - List of lists:
     - https://dbl.oisd.nl/
+15. Add devices manually on syncthing (eg. 10.0.0.2:22000)
 
 
 # How Tos
@@ -254,6 +293,9 @@ scp ${HOME}/backups/* pi@192.168.1.253:/home/pi/backups
 
 sudo tar -I zstd -xf ${HOME}/backups/wireguard.tar.zstd -C /etc/wireguard
 
+sudo tar -I zstd -xf ${HOME}/backups/radicale-15-11-2022.tar.zstd -C /var/lib/docker/volumes/radicale
+
+sudo tar -I zstd -xf ${HOME}/backups/caddy-webdav-15-11-2022.tar.zstd -C /var/lib/docker/volumes/caddy-webdav
 sudo tar -I zstd -xf ${HOME}/backups/caddy-data-15-11-2022.tar.zstd -C /var/lib/docker/volumes/caddy-data
 sudo tar -I zstd -xf ${HOME}/backups/caddy-config-15-11-2022.tar.zstd -C /var/lib/docker/volumes/caddy-config
 

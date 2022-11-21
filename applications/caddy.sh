@@ -10,6 +10,39 @@ sudo docker network create caddy
 # Create Docker volumes
 sudo docker volume create caddy-data
 sudo docker volume create caddy-config
+sudo docker volume create caddy-webdav
+
+# Generate WebDAV password
+PASSWORD=$(openssl rand -hex 48)
+HASHED_PASSWORD=$(sudo docker run caddy:2-alpine caddy hash-password --plaintext ${PASSWORD})
+
+################################################
+##### Kernel configurations
+################################################
+
+# References:
+# https://github.com/lucas-clemente/quic-go/wiki/UDP-Receive-Buffer-Size
+
+sudo sysctl net.core.rmem_max=2500000
+sudo tee /etc/sysctl.d/99-udp-max-buffer-size.conf << EOF
+net.core.rmem_max=2500000
+EOF
+
+################################################
+##### Dockerfile
+################################################
+
+sudo tee /etc/selfhosted/caddy/Dockerfile << EOF
+FROM caddy:2-builder-alpine AS builder
+
+RUN xcaddy build \
+    --with github.com/caddy-dns/cloudflare \
+    --with github.com/mholt/caddy-webdav
+
+FROM caddy:2-alpine
+
+COPY --from=builder /usr/bin/caddy /usr/bin/caddy
+EOF
 
 ################################################
 ##### Docker Compose
@@ -30,11 +63,14 @@ services:
       - /etc/selfhosted/caddy/Caddyfile:/etc/caddy/Caddyfile
       - caddy-data:/data
       - caddy-config:/config
+      - caddy-webdav:/data/webdav
 
 volumes:
   caddy-data:
     external: true
   caddy-config:
+    external: true
+  caddy-webdav:
     external: true
 
 networks:
@@ -43,39 +79,13 @@ networks:
 EOF
 
 ################################################
-##### Dockerfile
-################################################
-
-sudo tee /etc/selfhosted/caddy/Dockerfile << EOF
-FROM caddy:2-builder-alpine AS builder
-
-RUN xcaddy build \
-    --with github.com/caddy-dns/cloudflare
-
-FROM caddy:2-alpine
-
-COPY --from=builder /usr/bin/caddy /usr/bin/caddy
-EOF
-
-################################################
-##### Kernel configurations
-################################################
-
-# References:
-# https://github.com/lucas-clemente/quic-go/wiki/UDP-Receive-Buffer-Size
-
-sudo sysctl net.core.rmem_max=2500000
-sudo tee /etc/sysctl.d/99-udp-max-buffer-size.conf << EOF
-net.core.rmem_max=2500000
-EOF
-
-################################################
 ##### Caddyfile
 ################################################
 
 sudo tee /etc/selfhosted/caddy/Caddyfile << EOF
 {
-        acme_dns cloudflare $CLOUDFLARE_API_TOKEN
+        acme_dns cloudflare ${CLOUDFLARE_API_TOKEN}
+        order webdav before file_server
 }
 
 (default-header) {
@@ -104,5 +114,14 @@ sudo tee /etc/selfhosted/caddy/Caddyfile << EOF
                 # Remove Server header
                 -Server
         }
+}
+
+# WebDAV
+webdav.${BASE_DOMAIN} {
+    root * /data/webdav
+    basicauth {
+        admin ${HASHED_PASSWORD}
+    }
+    webdav
 }
 EOF

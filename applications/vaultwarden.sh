@@ -60,7 +60,7 @@ EOF
 sudo tee -a /etc/selfhosted/caddy/Caddyfile << EOF
 
 # Vaultwarden
-vault.$BASE_DOMAIN {
+vault.${BASE_DOMAIN} {
         import default-header
 
         encode gzip

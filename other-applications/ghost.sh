@@ -64,7 +64,7 @@ EOF
 DATABASE_PASSWORD=$(openssl rand -hex 48)
 
 sudo tee /etc/selfhosted/ghost/config.env << EOF
-url=https://$BASE_DOMAIN:443
+url=https://${BASE_DOMAIN}:443
 MYSQL_DATABASE=ghost
 MYSQL_ROOT_PASSWORD=$DATABASE_PASSWORD
 database__client=mysql
@@ -81,7 +81,7 @@ EOF
 
 sudo tee -a /etc/selfhosted/caddy/Caddyfile << EOF
 
-$BASE_DOMAIN {
+${BASE_DOMAIN} {
         import default-header
 
         reverse_proxy ghost:2368 {

@@ -87,7 +87,7 @@ ADMIN_TOKEN=$(openssl rand -hex 48)
 WEBPASSWORD=$(openssl rand -hex 48)
 FTLCONF_LOCAL_IPV4=$(ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)
 TZ=$(cat /etc/timezone)
-VIRTUAL_HOST=pihole.$BASE_DOMAIN
+VIRTUAL_HOST=pihole.${BASE_DOMAIN}
 DNSMASQ_LISTENING=all
 PIHOLE_DNS_=pihole-unbound#53
 DNSSEC=false
@@ -249,7 +249,7 @@ sudo systemctl enable unbound-root-hints.timer
 sudo tee -a /etc/selfhosted/caddy/Caddyfile << EOF
 
 # Pi-hole
-pihole.$BASE_DOMAIN {
+pihole.${BASE_DOMAIN} {
         import default-header
 
         encode gzip

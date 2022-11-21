@@ -107,7 +107,7 @@ NEXTCLOUD_ADMIN_USER=admin
 NEXTCLOUD_ADMIN_PASSWORD=$(openssl rand -hex 48)
 POSTGRES_PASSWORD=$(openssl rand -hex 48)
 REDIS_HOST_PASSWORD=$(openssl rand -hex 48)
-NEXTCLOUD_TRUSTED_DOMAINS=cloud.$BASE_DOMAIN
+NEXTCLOUD_TRUSTED_DOMAINS=cloud.${BASE_DOMAIN}
 EOF
 
 ################################################
@@ -140,7 +140,7 @@ EOF
 sudo tee -a /etc/selfhosted/caddy/Caddyfile << EOF
 
 # Nextcloud
-cloud.$BASE_DOMAIN {
+cloud.${BASE_DOMAIN} {
         import default-header
 
         encode gzip

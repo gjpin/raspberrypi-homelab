@@ -104,7 +104,7 @@ POSTGRES_INITDB_ARGS=--data-checksums
 POSTGRES_DB=penpot
 POSTGRES_USER=penpot
 POSTGRES_PASSWORD=$DATABASE_PASSWORD
-PENPOT_PUBLIC_URI=https://penpot.$BASE_DOMAIN
+PENPOT_PUBLIC_URI=https://penpot.${BASE_DOMAIN}
 PENPOT_FLAGS=enable-registration enable-login disable-email-verification
 PENPOT_HTTP_SERVER_HOST=0.0.0.0
 PENPOT_DATABASE_URI=postgresql://penpot-postgres/penpot
@@ -138,7 +138,7 @@ EOF
 sudo tee -a /etc/selfhosted/caddy/Caddyfile << EOF
 
 # Penpot
-penpot.$BASE_DOMAIN {
+penpot.${BASE_DOMAIN} {
         import default-header
 
         encode gzip

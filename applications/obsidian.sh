@@ -88,7 +88,7 @@ EOF
 sudo tee -a /etc/selfhosted/caddy/Caddyfile << EOF
 
 # Obsidian
-obsidian.$BASE_DOMAIN {
+obsidian.${BASE_DOMAIN} {
         import default-header
 
         encode gzip

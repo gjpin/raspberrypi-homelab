@@ -78,26 +78,29 @@ ExecStart=/usr/bin/apt update
 ExecStart=/usr/bin/apt upgrade -y
 ExecStart=/usr/bin/apt autoremove -y
 
-ExecStart=/usr/bin/docker compose -f /etc/selfhosted/nextcloud/docker-compose.yml pull
-ExecStart=/usr/bin/docker compose -f /etc/selfhosted/obsidian/docker-compose.yml pull
-ExecStart=/usr/bin/docker compose -f /etc/selfhosted/penpot/docker-compose.yml pull
-ExecStart=/usr/bin/docker compose -f /etc/selfhosted/pihole/docker-compose.yml pull
-ExecStart=/usr/bin/docker compose -f /etc/selfhosted/vaultwarden/docker-compose.yml pull
 ExecStart=/usr/bin/docker compose -f /etc/selfhosted/caddy/docker-compose.yml build --pull --no-cache
+ExecStart=/usr/bin/docker compose -f /etc/selfhosted/immich/docker-compose.yml pull
+ExecStart=/usr/bin/docker compose -f /etc/selfhosted/obsidian/docker-compose.yml pull
+ExecStart=/usr/bin/docker compose -f /etc/selfhosted/pihole/docker-compose.yml pull
+ExecStart=/usr/bin/docker compose -f /etc/selfhosted/radicale/docker-compose.yml build --pull --no-cache
+ExecStart=/usr/bin/docker compose -f /etc/selfhosted/syncthing/docker-compose.yml pull
+ExecStart=/usr/bin/docker compose -f /etc/selfhosted/vaultwarden/docker-compose.yml pull
 
-ExecStart=/usr/bin/docker compose -f /etc/selfhosted/nextcloud/docker-compose.yml down
-ExecStart=/usr/bin/docker compose -f /etc/selfhosted/obsidian/docker-compose.yml down
-ExecStart=/usr/bin/docker compose -f /etc/selfhosted/penpot/docker-compose.yml down
-ExecStart=/usr/bin/docker compose -f /etc/selfhosted/pihole/docker-compose.yml down
-ExecStart=/usr/bin/docker compose -f /etc/selfhosted/vaultwarden/docker-compose.yml down
 ExecStart=/usr/bin/docker compose -f /etc/selfhosted/caddy/docker-compose.yml down
+ExecStart=/usr/bin/docker compose -f /etc/selfhosted/immich/docker-compose.yml down
+ExecStart=/usr/bin/docker compose -f /etc/selfhosted/obsidian/docker-compose.yml down
+ExecStart=/usr/bin/docker compose -f /etc/selfhosted/pihole/docker-compose.yml down
+ExecStart=/usr/bin/docker compose -f /etc/selfhosted/radicale/docker-compose.yml down
+ExecStart=/usr/bin/docker compose -f /etc/selfhosted/syncthing/docker-compose.yml down
+ExecStart=/usr/bin/docker compose -f /etc/selfhosted/vaultwarden/docker-compose.yml down
 
-ExecStart=/usr/bin/docker compose -f /etc/selfhosted/nextcloud/docker-compose.yml up -d
-ExecStart=/usr/bin/docker compose -f /etc/selfhosted/obsidian/docker-compose.yml up -d
-ExecStart=/usr/bin/docker compose -f /etc/selfhosted/penpot/docker-compose.yml up -d
-ExecStart=/usr/bin/docker compose -f /etc/selfhosted/pihole/docker-compose.yml up -d
-ExecStart=/usr/bin/docker compose -f /etc/selfhosted/vaultwarden/docker-compose.yml up -d
 ExecStart=/usr/bin/docker compose -f /etc/selfhosted/caddy/docker-compose.yml up -d
+ExecStart=/usr/bin/docker compose -f /etc/selfhosted/immich/docker-compose.yml up -d
+ExecStart=/usr/bin/docker compose -f /etc/selfhosted/obsidian/docker-compose.yml up -d
+ExecStart=/usr/bin/docker compose -f /etc/selfhosted/pihole/docker-compose.yml up -d
+ExecStart=/usr/bin/docker compose -f /etc/selfhosted/radicale/docker-compose.yml up -d
+ExecStart=/usr/bin/docker compose -f /etc/selfhosted/syncthing/docker-compose.yml up -d
+ExecStart=/usr/bin/docker compose -f /etc/selfhosted/vaultwarden/docker-compose.yml up -d
 
 ExecStart=/usr/bin/docker image prune -f
 ExecStart=/usr/sbin/reboot
@@ -124,17 +127,17 @@ sudo systemctl enable automatic-updates.timer
 # Automatic Docker volumes backup
 #############################
 
+mkdir -p ${HOME}/syncthing/Sync/containers_backups
+
 # Backup script
 sudo tee /usr/local/bin/automatic-backups.sh << 'EOF'
 #!/usr/bin/bash
 
-VOLUME_NAME_ARRAY=("vaultwarden" "nextcloud-postgres" "obsidian" "penpot-postgres" "penpot-assets")
-
-USER_ID=$(stat -c '%u' /var/lib/docker/volumes/nextcloud-data/_data)
+VOLUME_NAME_ARRAY=("caddy-webdav" "obsidian" "radicale" "vaultwarden")
 
 for VOLUME_NAME in ${VOLUME_NAME_ARRAY[@]}; do
-  tar -I zstd --exclude="/var/lib/docker/volumes/nextcloud-data/_data/admin/files/backups" -cf /var/lib/docker/volumes/nextcloud-data/_data/admin/files/backups/$VOLUME_NAME-$(date +'%d-%m-%Y').tar.zstd -C /var/lib/docker/volumes/$VOLUME_NAME ./
-  chown -R $USER_ID:$USER_ID /var/lib/docker/volumes/nextcloud-data/_data/admin/files/backups
+  tar -I zstd -cf /home/pi/syncthing/Sync/containers_backups/$VOLUME_NAME-$(date +'%d-%m-%Y').tar.zstd -C /var/lib/docker/volumes/$VOLUME_NAME ./
+  chown -R pi:pi /home/pi/syncthing/Sync/containers_backups
 done
 EOF
 
@@ -148,19 +151,17 @@ Description=Automatically backup docker containers
 [Service]
 Type=oneshot
 
-ExecStart=/usr/bin/docker compose -f /etc/selfhosted/vaultwarden/docker-compose.yml down
-ExecStart=/usr/bin/docker compose -f /etc/selfhosted/nextcloud/docker-compose.yml down
+ExecStart=/usr/bin/docker compose -f /etc/selfhosted/caddy/docker-compose.yml down
 ExecStart=/usr/bin/docker compose -f /etc/selfhosted/obsidian/docker-compose.yml down
-ExecStart=/usr/bin/docker compose -f /etc/selfhosted/penpot/docker-compose.yml down
+ExecStart=/usr/bin/docker compose -f /etc/selfhosted/radicale/docker-compose.yml down
+ExecStart=/usr/bin/docker compose -f /etc/selfhosted/vaultwarden/docker-compose.yml down
 
 ExecStart=/usr/local/bin/automatic-backups.sh
 
-ExecStart=/usr/bin/docker compose -f /etc/selfhosted/vaultwarden/docker-compose.yml up -d
-ExecStart=/usr/bin/docker compose -f /etc/selfhosted/nextcloud/docker-compose.yml up -d
+ExecStart=/usr/bin/docker compose -f /etc/selfhosted/caddy/docker-compose.yml up -d
 ExecStart=/usr/bin/docker compose -f /etc/selfhosted/obsidian/docker-compose.yml up -d
-ExecStart=/usr/bin/docker compose -f /etc/selfhosted/penpot/docker-compose.yml up -d
-
-ExecStart=/usr/bin/docker exec --user www-data nextcloud php occ files:scan --all
+ExecStart=/usr/bin/docker compose -f /etc/selfhosted/radicale/docker-compose.yml up -d
+ExecStart=/usr/bin/docker compose -f /etc/selfhosted/vaultwarden/docker-compose.yml up -d
 EOF
 
 sudo tee /etc/systemd/system/automatic-backups.timer << EOF
@@ -185,11 +186,12 @@ sudo systemctl enable automatic-backups.timer
 ################################################
 
 sudo ./applications/caddy.sh
-sudo ./applications/pihole.sh
-sudo ./applications/vaultwarden.sh
-sudo ./applications/nextcloud.sh
+sudo ./applications/immich.sh
 sudo ./applications/obsidian.sh
-sudo ./applications/penpot.sh
+sudo ./applications/pihole.sh
+sudo ./applications/radicale.sh
+sudo ./applications/syncthing.sh
+sudo ./applications/vaultwarden.sh
 
 ################################################
 ##### Steam Link

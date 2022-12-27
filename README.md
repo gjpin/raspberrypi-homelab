@@ -152,6 +152,7 @@ EOSQL
     - https://github.com/mmotti/pihole-regex/blob/master/regex.list
     - (\.|^)panelresearch\.googlevideo\.com$
     - /^[a-z0-9]+-+sn-+[a-z0-9]+-+[a-z0-9]+\.googlevideo\.com$/
+    - (\.|^)easebar\.com$
   - Privacy:
     - https://raw.githubusercontent.com/crazy-max/WindowsSpyBlocker/master/data/hosts/spy.txt
     - https://v.firebog.net/hosts/Easyprivacy.txt
@@ -196,6 +197,7 @@ EOSQL
     - https://raw.githubusercontent.com/bongochong/CombinedPrivacyBlockLists/master/newhosts-final.hosts
     - https://someonewhocares.org/hosts/zero/
     - https://blokada.org/blocklists/ddgtrackerradar/standard/hosts.txt
+    - https://raw.githubusercontent.com/Perflyst/PiHoleBlocklist/master/android-tracking.txt
 15. Add devices manually on syncthing (eg. tcp://10.0.0.1:22000)
 
 

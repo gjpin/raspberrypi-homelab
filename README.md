@@ -198,6 +198,7 @@ EOSQL
     - https://someonewhocares.org/hosts/zero/
     - https://blokada.org/blocklists/ddgtrackerradar/standard/hosts.txt
     - https://raw.githubusercontent.com/Perflyst/PiHoleBlocklist/master/android-tracking.txt
+    - https://raw.githubusercontent.com/blokadaorg/landing-github-pages/master/blocklists/exodusprivacy/standard/hosts.txt
 15. Add devices manually on syncthing (eg. tcp://10.0.0.1:22000)
 
 

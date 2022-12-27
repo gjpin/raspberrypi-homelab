@@ -150,6 +150,8 @@ EOSQL
 14. Add lists to Pi-hole (https://firebog.net):
   - Regex (add to https://pihole.${BASE_DOMAIN}/admin/groups-domains.php):
     - https://github.com/mmotti/pihole-regex/blob/master/regex.list
+    - (\.|^)panelresearch\.googlevideo\.com$
+    - /^[a-z0-9]+-+sn-+[a-z0-9]+-+[a-z0-9]+\.googlevideo\.com$/
   - Privacy:
     - https://raw.githubusercontent.com/crazy-max/WindowsSpyBlocker/master/data/hosts/spy.txt
     - https://v.firebog.net/hosts/Easyprivacy.txt
@@ -181,7 +183,20 @@ EOSQL
     - https://raw.githubusercontent.com/r-a-y/mobile-hosts/master/AdguardDNS.txt
   - List of lists:
     - https://dbl.oisd.nl/
-15. Add devices manually on syncthing (eg. 10.0.0.2:22000)
+  - Misc:
+    - https://badmojr.gitlab.io/1hosts/Pro/domains.txt
+    - https://raw.githubusercontent.com/d3ward/toolz/master/src/d3host.txt
+    - https://blocklistproject.github.io/Lists/malware.txt
+    - https://blocklistproject.github.io/Lists/tracking.txt
+    - https://www.github.developerdan.com/hosts/lists/ads-and-tracking-extended.txt
+    - https://www.github.developerdan.com/hosts/lists/amp-hosts-extended.txt
+    - https://www.github.developerdan.com/hosts/lists/hate-and-junk-extended.txt
+    - https://www.github.developerdan.com/hosts/lists/tracking-aggressive-extended.txt
+    - https://hblock.molinero.dev/hosts
+    - https://raw.githubusercontent.com/bongochong/CombinedPrivacyBlockLists/master/newhosts-final.hosts
+    - https://someonewhocares.org/hosts/zero/
+    - https://blokada.org/blocklists/ddgtrackerradar/standard/hosts.txt
+15. Add devices manually on syncthing (eg. tcp://10.0.0.1:22000)
 
 
 # How Tos

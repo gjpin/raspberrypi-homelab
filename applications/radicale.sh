@@ -21,7 +21,7 @@ sudo docker volume create radicale
 sudo tee /etc/selfhosted/radicale/Dockerfile << EOF
 FROM alpine:edge
 
-RUN apk add --no-cache radicale py3-bcrypt
+RUN apk add --update --no-cache radicale py3-bcrypt
 
 ENTRYPOINT ["radicale"]
 EOF

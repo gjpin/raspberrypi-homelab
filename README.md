@@ -152,7 +152,11 @@ EOSQL
     - https://github.com/mmotti/pihole-regex/blob/master/regex.list
     - (\.|^)panelresearch\.googlevideo\.com$
     - /^[a-z0-9]+-+sn-+[a-z0-9]+-+[a-z0-9]+\.googlevideo\.com$/
-    - (\.|^)easebar\.com$
+    - (\.|^)easebar\.com$ (blocklist)
+      - whitelist:
+        - (\.|^)update\.easebar\.com$
+        - drpf-diena.proxima.nie.easebar.com
+        - (\.|^)gph\.easebar\.com$
   - Privacy:
     - https://raw.githubusercontent.com/crazy-max/WindowsSpyBlocker/master/data/hosts/spy.txt
     - https://v.firebog.net/hosts/Easyprivacy.txt
